@@ -1,5 +1,8 @@
 package local.gonzalez.musicpadaustria;
 
+import android.media.AudioManager;
+import android.media.MediaPlayer;
+import android.media.SoundPool;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -12,25 +15,21 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-
+    public Button bplay, bstop, bsoundPool, bsPstop;
+    public MediaPlayer mp;
+    public SoundPool sp;
+    public int flujodemusica;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Se abre Snackbar", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -40,6 +39,23 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+
+        /*
+        Cambiar los nombres de los botones
+         */
+        bsoundPool = (Button) findViewById(R.id.playSp);
+        bplay.setOnClickListener(this);
+        bstop.setOnClickListener(this);
+
+        bsoundPool.setOnClickListener(this);
+        sp = new SoundPool(10, AudioManager.STREAM_MUSIC, 0);
+
+
+        this.setVolumeControlStream(AudioManager.STREAM_MUSIC);
+
+
+        flujodemusica = sp.load(this, R.raw.sonido_acierto, 1);
     }
 
     @Override
@@ -50,6 +66,38 @@ public class MainActivity extends AppCompatActivity
         } else {
             super.onBackPressed();
         }
+    }
+    public void onClick(View v) {
+        if (v.getId() == R.id.button1) {
+            play_mp();
+        }
+
+        if (v.getId() == R.id.button2) {
+            stop_mp();
+        }
+
+     /*
+        if (v.getId() == R.id.stopSp) {
+
+            stop_sp();
+        }
+     */
+    }
+    private void play_mp() {
+        mp = MediaPlayer.create(this, R.raw.main_theme);
+        mp.start();
+    }
+
+    /*
+    La estructura del objeto mediaplayer viene dada por:
+    Mediaplayer.create( Context , int Id_Sound);
+     */
+    private void stop_mp() {
+        mp.stop();
+    }
+
+    private void play_sp() {
+        sp.play(flujodemusica, 1, 1, 0, 0, 1f);
     }
 
     @Override
